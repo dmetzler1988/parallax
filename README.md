@@ -1,2 +1,2 @@
-# parallax
-smooth parallax animation with requestAnimationFrame
+# Parallax
+Smooth parallax animation with requestAnimationFrame.
