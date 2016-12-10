@@ -31,14 +31,7 @@ var animationframe = (function() {
         revealer = document.querySelectorAll(SELECTOR_CLASS);
         getViewportHeight();
 
-        for (var i = 0; i < revealer.length; i++) {
-            shiftValues[i] = 0;
-            shiftValuesBefore[i] = null;
-            relationValues[i] = 0;
-            relationValuesBefore[i] = null;
-            scaleValues[i] = 0;
-            scaleValuesBefore[i] = null;
-        }
+        initVariables();
 
         if (revealer.length > 0) {
             draw();
@@ -112,6 +105,19 @@ var animationframe = (function() {
         };
     }
 
+    function initVariables() {
+        if (revealer.length > 0) {
+            for (var i = 0; i < revealer.length; i++) {
+                shiftValues[i] = 0;
+                shiftValuesBefore[i] = null;
+                relationValues[i] = 0;
+                relationValuesBefore[i] = null;
+                scaleValues[i] = 0;
+                scaleValuesBefore[i] = null;
+            }
+        }
+    }
+
     function getViewportHeight() {
         // get viewport Size
         // http://www.w3schools.com/js/js_window.asp
@@ -171,6 +177,7 @@ var animationframe = (function() {
     */
     function resizeEvent() {
         getViewportHeight();
+        initVariables();
         scrollEvent();
     }
 
@@ -201,6 +208,7 @@ var animationframe = (function() {
             if (shiftValues[id] != shiftValuesBefore[id]) {
                 shiftValues[id] = setShift(elem);
                 shiftValuesBefore[id] = shiftValues[id];
+                console.log('set');
             }
 
             // relation needed for scale
