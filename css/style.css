@@ -27,10 +27,15 @@ body {
     flex-direction: column;
     justify-content: center;
     border: solid;
+    background-color: #bada55;
 }
 
 .full-height {
     min-height: 100vh;
+}
+
+.half-height {
+    min-height: 50vh;
 }
 
 .block--hero__image {
