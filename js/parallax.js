@@ -7,7 +7,11 @@ var animationframe = (function() {
         SELECTOR_CLASS = '.js-parallax';
 
     var viewportHeight = null,
-        revealer = null;
+        revealer = null,
+        shift = null,
+        relation = null,
+        scale = null,
+        revealerOffset = [];
 
     var _requestAnimationFrame = window.requestAnimationFrame
         || window.webkitRequestAnimationFrame
@@ -115,9 +119,7 @@ var animationframe = (function() {
      * @returns {number}
      */
     function checkPosition(elem) {
-        var offset = -(elem.offsetParent.getBoundingClientRect().top);
-
-        return offset;
+        return -(elem.offsetParent.getBoundingClientRect().top);
     }
 
     /**
@@ -128,7 +130,7 @@ var animationframe = (function() {
      * @returns {number}
      */
     function setShift(elem) {
-        return (viewportHeight - elem.offsetHeight) * .5;
+        shift = (viewportHeight - elem.offsetHeight) * .5;
     }
 
     /**
@@ -139,7 +141,7 @@ var animationframe = (function() {
      * @returns {string}
      */
     function setRelation(elem) {
-        return (elem.offsetHeight / viewportHeight).toFixed(3);
+        relation = (elem.offsetHeight / viewportHeight).toFixed(3);
     }
 
     /**
@@ -150,7 +152,29 @@ var animationframe = (function() {
      * @returns {number}
      */
     function setScale(elem) {
-        return ((1 - elem) * SPEED) + 1;
+        scale = ((1 - elem) * SPEED) + 1;
+    }
+
+    /**
+     * Check and start calculation for needed values.
+     *
+     * @param {object} elem
+     * @param {int} id
+     */
+    function calcValues(elem, id) {
+        if (elem.offsetHeight != revealerOffset[id]) {
+            // Shift value to center element vertically.
+            setShift(elem);
+
+            // Relation needed for scale.
+            setRelation(elem);
+
+            // Set scale.
+            setScale(elem);
+
+            // Set the current outerHeight of element to the revealerOffset with the same key than element.
+            revealerOffset[id] = elem.offsetHeight;
+        }
     }
 
     /**
@@ -160,6 +184,7 @@ var animationframe = (function() {
      */
     function scrollEvent() {
         for (var i = 0; i < revealer.length; i++) {
+            calcValues(revealer[i], i);
             singleScrollEvent(revealer[i]);
         }
     }
@@ -182,18 +207,6 @@ var animationframe = (function() {
 
         // If in viewport.
         if ((-viewportHeight < inViewPort) && (inViewPort < viewportHeight)) {
-
-            // Shift value to center element vertically.
-            // TODO: don't calculate all the time
-            var shift = setShift(elem);
-
-            // Relation needed for scale.
-            // TODO: don't calculate all the time
-            var relation = setRelation(elem);
-
-            // Set scale.
-            // TODO: don't calculate all the time
-            var scale = setScale(relation);
 
             // Add class when in viewport revealed.
             elem.classList.add('revealed');
@@ -230,6 +243,7 @@ var animationframe = (function() {
             }, THROTTLE * 10);
 
             scrollHandler();
+            resizeHandler();
 
             // Listening for events.
             if (window.addEventListener) {
