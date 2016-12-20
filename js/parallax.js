@@ -18,10 +18,10 @@ var animationframe = (function() {
         scaleValuesBefore = [];
 
     var _requestAnimationFrame = window.requestAnimationFrame
-    || window.webkitRequestAnimationFrame
-    || window.mozRequestAnimationFrame
-    || window.oRequestAnimationFrame
-    || window.msRequestAnimationFrame;
+        || window.webkitRequestAnimationFrame
+        || window.mozRequestAnimationFrame
+        || window.oRequestAnimationFrame
+        || window.msRequestAnimationFrame;
 
     /**
      * Initialize the function for custom parallax scrolling event
@@ -47,7 +47,7 @@ var animationframe = (function() {
      * @param {number} wait
      * @param {object} options
      *
-     * @returns {Function} result
+     * @returns {function} result
      */
     function throttle(func, wait, options) {
         var _ = {
@@ -105,6 +105,9 @@ var animationframe = (function() {
         };
     }
 
+    /**
+     * Initialize the variables.
+     */
     function initVariables() {
         if (revealer.length > 0) {
             for (var i = 0; i < revealer.length; i++) {
@@ -118,22 +121,22 @@ var animationframe = (function() {
         }
     }
 
+    /**
+     * Get viewport height.
+     * http://www.w3schools.com/js/js_window.asp
+     */
     function getViewportHeight() {
-        // get viewport Size
-        // http://www.w3schools.com/js/js_window.asp
-
-        // viewport height
         viewportHeight = window.innerHeight
             || document.documentElement.clientHeight
             || document.body.clientHeight;
     }
 
     /**
-    * Returns a negative rounded offset top position of element.
-    *
-    * @param {object} elem
-    * @returns {number}
-    */
+     * Returns a negative rounded offset top position of element.
+     *
+     * @param {object} elem
+     * @returns {number}
+     */
     function checkPosition(elem) {
         return -(elem.offsetParent.getBoundingClientRect().top);
     }
@@ -172,9 +175,9 @@ var animationframe = (function() {
     }
 
     /**
-    * get viewport height after resizing
-    * init the scrollEvent after resizing
-    */
+     * get viewport height after resizing
+     * init the scrollEvent after resizing
+     */
     function resizeEvent() {
         getViewportHeight();
         initVariables();
@@ -182,48 +185,54 @@ var animationframe = (function() {
     }
 
     /**
-    * Add the parallax effect to each element.
-    * It starts only if element is in viewport and ends when element
-    * is out of viewport.
-    */
-    function scrollEvent(){
+     * Add the parallax effect to each element.
+     * It starts only if element is in viewport and ends when element
+     * is out of viewport.
+     */
+    function scrollEvent() {
         for (var i = 0; i < revealer.length; i++) {
             singleScrollEvent(revealer[i], i);
         }
     }
 
+    /**
+     * Calculates the scroll position for parallax elements.
+     *
+     * @param {object} elem
+     * @param {int} id
+     */
     function singleScrollEvent(elem, id) {
-        // check current position of the element
+        // Check current position of the element
         var inViewPort = checkPosition(elem);
 
-        // add style for better performance
+        // Add style for better performance
         if (elem.style.willChange != 'transform') {
             elem.style.willChange = 'transform';
         }
 
-        // in viewport
-        if ( (-viewportHeight < inViewPort) &&  (inViewPort < viewportHeight)) {
-            
-            // shift value to center element vertically
+        // In viewport
+        if ((-viewportHeight < inViewPort) && (inViewPort < viewportHeight)) {
+
+            // Shift value to center element vertically
             if (shiftValues[id] != shiftValuesBefore[id]) {
                 shiftValues[id] = setShift(elem);
                 shiftValuesBefore[id] = shiftValues[id];
                 console.log('set');
             }
 
-            // relation needed for scale
+            // Relation needed for scale
             if (relationValues[id] != relationValuesBefore[id]) {
                 relationValues[id] = setRelation(elem);
                 relationValuesBefore[id] = relationValues[id];
             }
 
-            // SET SCALE 
+            // Set scale
             if (scaleValues[id] != scaleValuesBefore[id]) {
                 scaleValues[id] = setScale(relationValues[id]);
                 scaleValuesBefore[id] = scaleValues[id];
             }
 
-            // add class when in viewport revealed
+            // Add class when in viewport revealed
             elem.classList.add('revealed');
 
             // Scroll value %
@@ -233,17 +242,17 @@ var animationframe = (function() {
             elem.style.transform = 'translate3d(0,' + scrollValue + '%, 0) scale(' + scaleValues[id].toFixed(4) + ')';
 
         } else {
-            // remove class when not in viewport
+            // Remove class when not in viewport
             elem.classList.remove('revealed');
         }
     }
 
     /**
      * Adds the requestAnimationFrame for each event (scrolling, resize).
+     *   Cutting the mustard
+     *   http://webfieldmanual.com/guides/cutting-the-mustard.html
      */
     function draw() {
-        // Cutting the mustard
-        // http://webfieldmanual.com/guides/cutting-the-mustard.html
         if (window.requestAnimationFrame && document.documentElement.classList) {
             // Passes the test so add enhanced class to HTML tag
             document.documentElement.classList.add('enhanced');
@@ -275,10 +284,9 @@ var animationframe = (function() {
     }
 
     return {
-        init : init
+        init: init
     };
 
 })(window, document, animationframe);
-
 
 animationframe.init();
